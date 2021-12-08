@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - LED_Light
+  - Wire
+  - TextTMP
+  - Interactive
+  - UI_Canvas
+  - Connection_Points
+  - Power_Source_Negative
+  - Power_Source_Positive
+  - Resistor
+  - Selection_Points
+  - Breadboard
+  - Element Spawn Point
+  - SpawnCollider
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - SpawnZone
+  - SpawnCollider
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
