@@ -149,6 +149,8 @@ namespace ES3Internal
                         MoveFile(oldFileBackup, settings.FullPath);
                         throw e;
                     }
+
+                    DeleteFile(oldFileBackup);
                 }
                 // Else just rename the temporary file to the main file.
                 else

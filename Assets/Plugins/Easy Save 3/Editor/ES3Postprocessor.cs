@@ -36,7 +36,7 @@ public class ES3Postprocessor : UnityEditor.AssetModificationProcessor
     static ES3Postprocessor()
     {
         // Open the Easy Save 3 window the first time ES3 is installed.
-        ES3Editor.ES3Window.OpenEditorWindowOnStart();
+        //ES3Editor.ES3Window.OpenEditorWindowOnStart();
 
 #if UNITY_2017_2_OR_NEWER
         EditorApplication.playModeStateChanged += PlayModeStateChanged;
@@ -114,10 +114,11 @@ public class ES3Postprocessor : UnityEditor.AssetModificationProcessor
         // Only update if the list has changed.
         for (int i = 0; i < currentAssemblyNames.Length; i++)
         {
-            if (currentAssemblyNames[i] != assemblyNames[i])
+            if (currentAssemblyNames.Length != assemblyNames.Count || currentAssemblyNames[i] != assemblyNames[i])
             {
                 defaults.settings.assemblyNames = assemblyNames.ToArray();
                 EditorUtility.SetDirty(defaults);
+                break;
             }
         }
 #endif

@@ -183,40 +183,45 @@ namespace ES3Editor
 
             public void DrawHierarchy(string searchTerm)
             {
-                bool containsSearchTerm = t.name.ToLowerInvariant().Contains(searchTerm);
-                if (containsSearchTerm)
+                bool containsSearchTerm = false;
+                if (t != null)
                 {
-                    GUIContent saveIcon;
-                    EditorGUIUtility.SetIconSize(new Vector2(16, 16));
-
-                    if (HasSelectedComponents())
-                        saveIcon = new GUIContent(t.name, EditorStyle.Get.saveIconSelected, "There are Components on this GameObject which will be saved.");
-                    else
-                        saveIcon = new GUIContent(t.name, EditorStyle.Get.saveIconUnselected, "No Components on this GameObject will be saved");
-
-                    GUIStyle style = GUI.skin.GetStyle("Foldout");
-                    if (Selection.activeTransform == t)
+                    if (containsSearchTerm = t.name.ToLowerInvariant().Contains(searchTerm))
                     {
-                        style = new GUIStyle(style);
-                        style.fontStyle = FontStyle.Bold;
-                    }
+                        GUIContent saveIcon;
+                        EditorGUIUtility.SetIconSize(new Vector2(16, 16));
 
-                    var open = EditorGUILayout.Foldout(showComponents, saveIcon, style);
-                    if (open)
-                    {
-                        // Ping the GameObject if this was previously closed
-                        if (showComponents != open)
-                            EditorGUIUtility.PingObject(t.gameObject);
-                        DrawComponents();
-                    }
-                    showComponents = open;
+                        if (HasSelectedComponents())
+                            saveIcon = new GUIContent(t.name, EditorStyle.Get.saveIconSelected, "There are Components on this GameObject which will be saved.");
+                        else
+                            saveIcon = new GUIContent(t.name, EditorStyle.Get.saveIconUnselected, "No Components on this GameObject will be saved");
 
-                    EditorGUI.indentLevel += 1;
+                        GUIStyle style = GUI.skin.GetStyle("Foldout");
+                        if (Selection.activeTransform == t)
+                        {
+                            style = new GUIStyle(style);
+                            style.fontStyle = FontStyle.Bold;
+                        }
+
+                        var open = EditorGUILayout.Foldout(showComponents, saveIcon, style);
+                        if (open)
+                        {
+                            // Ping the GameObject if this was previously closed
+                            if (showComponents != open)
+                                EditorGUIUtility.PingObject(t.gameObject);
+                            DrawComponents();
+                        }
+                        showComponents = open;
+
+                        EditorGUI.indentLevel += 1;
+                    }
                 }
 
                 // Draw children
-                foreach (var child in children)
-                    child.DrawHierarchy(searchTerm);
+                if(children != null)
+                    foreach (var child in children)
+                        if(child != null)
+                            child.DrawHierarchy(searchTerm);
 
                 if(containsSearchTerm)
                     EditorGUI.indentLevel-=1;
@@ -227,6 +232,27 @@ namespace ES3Editor
                 EditorGUI.indentLevel+=3;
                 using (var scope = new EditorGUILayout.VerticalScope())
                 {
+                    bool toggle;
+                    toggle = EditorGUILayout.ToggleLeft("active", autoSave != null ? autoSave.saveActive : false);
+                    if((autoSave = (toggle && autoSave == null) ? t.gameObject.AddComponent<ES3AutoSave>() : autoSave) != null)
+                        autoSave.saveActive = toggle;
+
+                    toggle = EditorGUILayout.ToggleLeft("hideFlags", autoSave != null ? autoSave.saveHideFlags : false);
+                    if ((autoSave = (toggle && autoSave == null) ? t.gameObject.AddComponent<ES3AutoSave>() : autoSave) != null)
+                        autoSave.saveHideFlags = toggle;
+
+                    toggle = EditorGUILayout.ToggleLeft("layer", autoSave != null ? autoSave.saveLayer : false);
+                    if ((autoSave = (toggle && autoSave == null) ? t.gameObject.AddComponent<ES3AutoSave>() : autoSave) != null)
+                        autoSave.saveLayer = toggle;
+
+                    toggle = EditorGUILayout.ToggleLeft("name", autoSave != null ? autoSave.saveName : false);
+                        if ((autoSave = (toggle && autoSave == null) ? t.gameObject.AddComponent<ES3AutoSave>() : autoSave) != null)
+                        autoSave.saveName = toggle;
+
+                    toggle = EditorGUILayout.ToggleLeft("tag", autoSave != null ? autoSave.saveTag : false);
+                    if ((autoSave = (toggle && autoSave == null) ? t.gameObject.AddComponent<ES3AutoSave>() : autoSave) != null)
+                        autoSave.saveTag = toggle;
+
                     foreach (var component in components)
                     {
                         if (component == null)
@@ -258,6 +284,12 @@ namespace ES3Editor
                                 ES3Window.InitAndShowTypes(component.GetType());
                         }
                     }
+                }
+
+                if(autoSave != null && (autoSave.componentsToSave == null || autoSave.componentsToSave.Count == 0) && !autoSave.saveActive && !autoSave.saveChildren && !autoSave.saveHideFlags && !autoSave.saveLayer && !autoSave.saveName && !autoSave.saveTag)
+                {
+                    Undo.DestroyObjectImmediate(autoSave);
+                    autoSave = null;
                 }
                 EditorGUI.indentLevel-=3;
             }

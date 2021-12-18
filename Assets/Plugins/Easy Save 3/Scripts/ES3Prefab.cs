@@ -198,7 +198,7 @@ namespace ES3Types
         public override void ReadInto<T>(ES3Reader reader, object obj)
         {
             // Load as ES3Refs and convert to longs.
-            var localToGlobal_refs = reader.ReadProperty<Dictionary<ES3Ref, ES3Ref>>();
+            var localToGlobal_refs = reader.ReadProperty<Dictionary<ES3Ref, ES3Ref>>(ES3Type_ES3RefDictionary.Instance);
             var localToGlobal = new Dictionary<long, long>();
             foreach (var kvp in localToGlobal_refs)
                 localToGlobal.Add(kvp.Key.id, kvp.Value.id);

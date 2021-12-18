@@ -151,6 +151,9 @@ public class ES3File
         var unencryptedSettings = (ES3Settings)settings.Clone();
         unencryptedSettings.encryptionType = ES3.EncryptionType.None;
         unencryptedSettings.compressionType = ES3.CompressionType.None;
+
+        // If T is object, use the value to get it's type. Otherwise, use T so that it works with inheritence.
+
         cache[key] = new ES3Data(ES3TypeMgr.GetOrCreateES3Type(typeof(T)), ES3.Serialize(value, unencryptedSettings));
     }
 

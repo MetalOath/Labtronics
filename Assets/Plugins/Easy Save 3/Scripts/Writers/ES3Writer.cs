@@ -164,11 +164,23 @@ public abstract class ES3Writer : IDisposable
 	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 	public virtual void Write(object value, ES3Type type, ES3.ReferenceMode memberReferenceMode = ES3.ReferenceMode.ByRef)
 	{
+        // Note that we have to check UnityEngine.Object types for null by casting it first, otherwise
+        // it will always return false.
+        if (value == null || (ES3Reflection.IsAssignableFrom(typeof(UnityEngine.Object), value.GetType()) && value as UnityEngine.Object == null))
+        {
+            WriteNull();
+            return;
+        }
+
         // Deal with System.Objects
-        if (type.type == typeof(object))
+        if (type == null || type.type == typeof(object))
         {
             var valueType = value.GetType();
             type = ES3TypeMgr.GetOrCreateES3Type(valueType);
+
+            if(type == null)
+                throw new NotSupportedException("Types of " + valueType + " are not supported.");
+
             if (!type.isCollection && !type.isDictionary)
             {
                 StartWriteObject(null);
@@ -180,14 +192,6 @@ public abstract class ES3Writer : IDisposable
                 return;
             }
         }
-
-        // Note that we have to check UnityEngine.Object types for null by casting it first, otherwise
-        // it will always return false.
-        if (value == null || (type.isES3TypeUnityObject && ((UnityEngine.Object)value) == null))
-		{ 
-			WriteNull(); 
-			return; 
-		}
 
 		if(type == null)
 			throw new ArgumentNullException("ES3Type argument cannot be null.");
@@ -460,7 +464,7 @@ public abstract class ES3Writer : IDisposable
 	protected void Merge(ES3Reader reader)
 	{
 		foreach(KeyValuePair<string,ES3Data> kvp in reader.RawEnumerator)
-			if(!keysToDelete.Contains(kvp.Key))
+			if(!keysToDelete.Contains(kvp.Key) || kvp.Value.type == null) // Don't add keys whose data is of a type which no longer exists in the project.
 				Write(kvp.Key, kvp.Value.type.type, kvp.Value.bytes);
 	}
 

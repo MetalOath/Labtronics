@@ -1,8 +1,29 @@
+3.3.2f7
+- Type data is now stored when using ES3.Serialize<object>.
+- Worked around issue where Unity would return an incorrect number of assemblies.
+
+3.3.2f6
+- ES3Spreadsheet now correctly serializes object types into a CSV file.
+- Resolved issue where an object[] containing primitive types could not be loaded in some situations.
+- Worked around issue where PlayMaker wouldn't initialize variable before it's value was reset.
+- Created a workaround for some situations where Unity creates new instances of ScriptableObjects in Assets at runtime.
+- Resolved issue where Base-64 encoding option would not work with newline option in PlayMaker SaveRaw action.
+
+3.3.2f5
+- Resolved issue where scripts were not overwritten by Asset Store importer, causing Easy Save to be unstable.
+
+3.3.2f4
+- Resolved issue where Save action for PlayMaker could return NullReferenceException due to using the wrong ES3.Save override.
+- Worked around IL2CPP bug where reflection would not find particular ES3Types on iOS
+- Resolved issue where trying to store an empty/unassigned PlayMaker object would throw a NulReferenceException.
+- Keys of a type which no longer exists in the project are now automatically removed
+- Abstract types used in an ES3Type will now work as intended
+
 3.3.2f3
+- Added GameObject variables to Auto Save
 - Resolved issue where Sprites would be loaded with the incorrect pivot.
 - Resolved issue where Stacks were loaded in reverse.
 - Added a 'quality' field to the ES3.SaveImage method to allow the quality to be specified when saving JPEGs.
-- Worked around IL2CPP bug where reflection would not find particular ES3Types on iOS
 
 3.3.2f2
 - Added method which allows raw bytes to be uploaded via ES3Cloud.

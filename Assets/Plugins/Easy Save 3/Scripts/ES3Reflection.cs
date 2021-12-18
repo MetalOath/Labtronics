@@ -118,7 +118,7 @@ namespace ES3Internal
                     continue;
 
                 // Don't serialize member fields.
-                if (safe && fieldName.StartsWith(memberFieldPrefix) && field.DeclaringType.Namespace.Contains("UnityEngine"))
+                if (safe && fieldName.StartsWith(memberFieldPrefix) && field.DeclaringType.Namespace != null && field.DeclaringType.Namespace.Contains("UnityEngine"))
                     continue;
 
                 serializableFields.Add(field);

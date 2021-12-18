@@ -39,11 +39,16 @@ namespace ES3Types
 
             var es3AutoSave = instance.GetComponent<ES3AutoSave>();
 
-            writer.WriteProperty("layer", instance.layer, ES3Type_int.Instance);
-            writer.WriteProperty("tag", instance.tag, ES3Type_string.Instance);
-            writer.WriteProperty("name", instance.name, ES3Type_string.Instance);
-            writer.WriteProperty("hideFlags", instance.hideFlags);
-            writer.WriteProperty("active", instance.activeSelf);
+            if(es3AutoSave == null || es3AutoSave.saveLayer)
+                writer.WriteProperty("layer", instance.layer, ES3Type_int.Instance);
+            if (es3AutoSave == null || es3AutoSave.saveTag)
+                writer.WriteProperty("tag", instance.tag, ES3Type_string.Instance);
+            if (es3AutoSave == null || es3AutoSave.saveName)
+                writer.WriteProperty("name", instance.name, ES3Type_string.Instance);
+            if (es3AutoSave == null || es3AutoSave.saveHideFlags)
+                writer.WriteProperty("hideFlags", instance.hideFlags);
+            if (es3AutoSave == null || es3AutoSave.saveActive)
+                writer.WriteProperty("active", instance.activeSelf);
 
             if ((es3AutoSave == null && saveChildren) || (es3AutoSave != null && es3AutoSave.saveChildren))
                     writer.WriteProperty("children", GetChildren(instance), ES3.ReferenceMode.ByRefAndValue);
@@ -109,8 +114,8 @@ namespace ES3Types
                 }
                 else if (propertyName == null)
                 {
-                    if (obj == null)
-                        return CreateNewGameObject(refMgr, id);
+                    /*if (obj == null)
+                        obj = CreateNewGameObject(refMgr, id);*/
                     return obj;
                 }
                 else

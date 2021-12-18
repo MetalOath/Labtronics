@@ -19,6 +19,7 @@ namespace ES3Types
 		public bool isValueType = false;
 		public bool isCollection = false;
 		public bool isDictionary = false;
+        public bool isEnum = false;
 		public bool isES3TypeUnityObject = false;
 		public bool isReflectedType = false;
 		public bool isUnsupported = false;

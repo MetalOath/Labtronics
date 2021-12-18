@@ -12,6 +12,7 @@ namespace ES3Types
 		public ES3Type_enum(Type type) : base(type)
 		{
 			isPrimitive = true;
+            isEnum = true;
 			Instance = this;
 			underlyingType = Enum.GetUnderlyingType(type);
 		}

@@ -3,11 +3,28 @@ using System.Collections.Generic;
 
 public class ES3AutoSave : MonoBehaviour, ISerializationCallbackReceiver
 {
+    public bool saveLayer = true;
+    public bool saveTag = true;
+    public bool saveName = true;
+    public bool saveHideFlags = true;
+    public bool saveActive = true;
     public bool saveChildren = false;
+
     private bool isQuitting = false;
 
     //[HideInInspector]
     public List<Component> componentsToSave = new List<Component>();
+
+    public void Reset()
+    {
+        // Initialise saveLayer (etc) to false for all new Components.
+        saveLayer = false;
+        saveTag = false;
+        saveName = false;
+        saveHideFlags = false;
+        saveActive = false;
+        saveChildren = false;
+    }
 
     public void Awake()
     {

@@ -51,11 +51,7 @@ public static class ES3
     /// <param name="settings">The settings we want to use to override the default settings.</param>
     public static void Save(string key, object value, ES3Settings settings)
     {
-        using (var writer = ES3Writer.Create(settings))
-        {
-            writer.Write<object>(key, value);
-            writer.Save();
-        }
+        Save<object>(key, value, settings);
     }
 
     /// <summary>Saves the value to the default file with the given key.</summary>
@@ -776,7 +772,11 @@ public static class ES3
             using (var stream = ES3Stream.CreateStream(ms, settings, ES3FileMode.Write))
             {
                 using (var baseWriter = ES3Writer.Create(stream, settings, false, false))
+                {
+                    // If T is object, use the value to get it's type. Otherwise, use T so that it works with inheritence.
+                    //var type = typeof(T) != typeof(object) ? typeof(T) : (value == null ? typeof(T) : value.GetType());
                     baseWriter.Write(value, ES3TypeMgr.GetOrCreateES3Type(typeof(T)), settings.referenceMode);
+                }
 
                 return ms.ToArray();
             }

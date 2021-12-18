@@ -5,22 +5,29 @@ using TMPro;
 
 public class WireInstantiator : MonoBehaviour
 {
+    // Serialized Variables
     [SerializeField] private GameObject wirePrefab, leadSegmentPrefab, wireSegmentPrefab, wireContainer, wirePromptTMP, cancelSpawn, cancalSpawnZoomed;
     [SerializeField] public Material redCPMat, greenCPMat, blueCPMat, redWireMat;
 
+    // Private Variables
     private Transform connectionPointOne, connectionPointTwo, wireContainerTransform;
     private GameObject elementPrefab;
     private float wirePrefabLength, elementPrefabLength, wireSegmentLength, wireLength, distanceBetweenPoints, yFunction, resistance;
     private int numberOfSegments;
+
+    // Public Variables
     public bool leadSpawnPhase = false;
     
+    // Manager Variables
     SimulationMethods Simulation;
 
     private void Start()
     {
+        // Initialize Simulation Manager Script Reference
         Simulation = GameObject.Find("Simulation Event Handler").GetComponent<SimulationMethods>();
     }
     
+    // This function executes when the player enters connect mode, and initiates wire spawn phase unpon the player's selection of the first connection point.
     public void WireSpawnPhaseInitiator()
     {
         wireContainerTransform = wireContainer.transform;

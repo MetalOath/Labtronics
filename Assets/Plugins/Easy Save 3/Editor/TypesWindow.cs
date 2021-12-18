@@ -607,9 +607,9 @@ namespace ES3Editor
 					continue;
 
 				string writeByRef = ES3Reflection.IsAssignableFrom(typeof(UnityEngine.Object), field.MemberType) ? "ByRef" : "";
-				string es3TypeParam = HasExplicitES3Type(es3Type) && writeByRef == "" ? ", "+es3Type.GetType().Name+".Instance" : "";
-				// If this is static, access the field through the class name rather than through an instance.
-				string instance = (field.IsStatic) ? GetFullTypeName(type) : "instance";
+                string es3TypeParam = HasExplicitES3Type(es3Type) && writeByRef == "" ? ", " + es3Type.GetType().Name + ".Instance" : (writeByRef == "" ? ", ES3Internal.ES3TypeMgr.GetES3Type(typeof(" + GetFullTypeName(field.MemberType) + "))" : "");
+                // If this is static, access the field through the class name rather than through an instance.
+                string instance = (field.IsStatic) ? GetFullTypeName(type) : "instance";
 
 				if(!field.IsPublic)
 				{
