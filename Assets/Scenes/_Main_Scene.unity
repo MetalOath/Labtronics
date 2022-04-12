@@ -5200,7 +5200,7 @@ MonoBehaviour:
   wireContainer: {fileID: 1180036478}
   wirePromptTMP: {fileID: 1202252454}
   cancelSpawn: {fileID: 76052660}
-  cancalSpawnZoomed: {fileID: 2079435992}
+  cancelSpawnZoomed: {fileID: 2079435992}
   redCPMat: {fileID: 2100000, guid: 9502b59764b76ff45b8df127caa08f50, type: 2}
   greenCPMat: {fileID: 2100000, guid: c6e50d63213fdbd4b91559454a169147, type: 2}
   blueCPMat: {fileID: 2100000, guid: bde81cc1a9112484988488285e941733, type: 2}

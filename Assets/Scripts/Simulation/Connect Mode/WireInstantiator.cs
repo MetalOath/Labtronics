@@ -1,115 +1,87 @@
-﻿using System.Collections;
+﻿// <header>
+// File Name : WireInstantiator.cs
+// Purpose :  This script carries the methods used to spawn a wire between any two connection points in the scene. 
+// Created By  : Othman Arnaout   (arnaout.othman@gmail.com)
+// Created On  : 2021/02/21
+// Modified By : Othman Arnaout
+// Modified On : 2021/12/19
+// Modification Note : Comment Cleanup
+// Other Notes :
+// </header>
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class WireInstantiator : MonoBehaviour
 {
-    // Serialized Variables
-    [SerializeField] private GameObject wirePrefab, leadSegmentPrefab, wireSegmentPrefab, wireContainer, wirePromptTMP, cancelSpawn, cancalSpawnZoomed;
-    [SerializeField] public Material redCPMat, greenCPMat, blueCPMat, redWireMat;
+    #region Static and Private variables/Fields/Properties
 
-    // Private Variables
-    private Transform connectionPointOne, connectionPointTwo, wireContainerTransform;
-    private GameObject elementPrefab;
-    private float wirePrefabLength, elementPrefabLength, wireSegmentLength, wireLength, distanceBetweenPoints, yFunction, resistance;
-    private int numberOfSegments;
+    private Transform 
+        connectionPointOne, 
+        connectionPointTwo, 
+        wireContainerTransform;
 
-    // Public Variables
-    public bool leadSpawnPhase = false;
-    
-    // Manager Variables
-    SimulationMethods Simulation;
+    private GameObject 
+        elementPrefab;
+
+    private float 
+        wirePrefabLength, 
+        elementPrefabLength, 
+        wireSegmentLength, 
+        wireLength, 
+        distanceBetweenPoints, 
+        yFunction, 
+        resistance;
+
+    private int 
+        numberOfSegments;
+
+    SimulationMethods 
+        Simulation;
+
+    #endregion
+
+
+
+    #region Public/Inspector variables
+
+    [SerializeField] private GameObject 
+        wirePrefab, 
+        leadSegmentPrefab, 
+        wireSegmentPrefab, 
+        wireContainer, 
+        wirePromptTMP, 
+        cancelSpawn, 
+        cancelSpawnZoomed;
+
+    [SerializeField] public Material 
+        redCPMat, 
+        greenCPMat, 
+        blueCPMat, 
+        redWireMat;
+
+    public bool 
+        leadSpawnPhase = false;
+
+    #endregion
+
+
+
+    #region Private methods - Unity methods
 
     private void Start()
     {
         // Initialize Simulation Manager Script Reference
         Simulation = GameObject.Find("Simulation Event Handler").GetComponent<SimulationMethods>();
     }
-    
-    // This function executes when the player enters connect mode, and initiates wire spawn phase unpon the player's selection of the first connection point.
-    public void WireSpawnPhaseInitiator()
-    {
-        wireContainerTransform = wireContainer.transform;
 
-        Ray raycast = Simulation.SingleRayCastByPlatform();
+    #endregion
 
-        RaycastHit[] raycastHits = Physics.RaycastAll(raycast, 100f);
-        RaycastHit raycastHit;
-        for (int i = 0; i < raycastHits.Length; i++)
-        {
-            if (raycastHits[i].transform.gameObject.CompareTag("Connection_Points"))
-            {
-                raycastHit = raycastHits[i];
-                if (raycastHit.transform.gameObject.GetComponent<MeshRenderer>().material.color == redCPMat.color)
-                {
-                    if (Simulation.inWireSpawnPhase == false)
-                    {
-                        raycastHit.transform.gameObject.GetComponent<MeshRenderer>().material = greenCPMat;
-                        connectionPointOne = raycastHit.transform;
-                        Simulation.inWireSpawnPhase = true;
-                        wirePromptTMP.GetComponent<TextMeshProUGUI>().text = "Select 2nd Connection Point";
-                        wirePromptTMP.GetComponent<TextMeshProUGUI>().color = Color.red;
-                        cancelSpawn.SetActive(true);
-                        cancalSpawnZoomed.SetActive(true);
-                    }
-                    else if (Simulation.inWireSpawnPhase == true && raycastHit.transform != connectionPointOne)
-                    {
-                        connectionPointTwo = raycastHit.transform;
-                        SpawnWire(connectionPointOne, connectionPointTwo);
-                        Simulation.inWireSpawnPhase = false;
-                        connectionPointOne.gameObject.GetComponent<MeshRenderer>().material = blueCPMat;
-                        connectionPointTwo.gameObject.GetComponent<MeshRenderer>().material = blueCPMat;
-                        wirePromptTMP.GetComponent<TextMeshProUGUI>().text = "Select 1st Connection Point";
-                        wirePromptTMP.GetComponent<TextMeshProUGUI>().color = Color.white;
-                        cancelSpawn.SetActive(false);
-                        cancalSpawnZoomed.SetActive(false);
 
-                        if (leadSpawnPhase)
-                        {
-                            leadSpawnPhase = false;
-                            Simulation.UIEventPublisher.ConnectModeUI();
-                            Simulation.UIEventPublisher.EditModeUI();
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-    }
 
-    public void LeadSpawnPhaseInitiator(GameObject element, float resistanceValue)
-    {
-        leadSpawnPhase = true;
-        elementPrefab = element;
-        resistance = resistanceValue;
-    }
-
-    public void SetWireColor([SerializeField] Material wireMaterial)
-    {
-        wireSegmentPrefab.GetComponent<MeshRenderer>().material = wireMaterial;
-    }
-
-    public void BreakWireSpawnPhase()
-    {
-        if(Simulation.inWireSpawnPhase == true)
-        {
-            connectionPointOne.gameObject.GetComponent<MeshRenderer>().material = redCPMat;
-            Simulation.inWireSpawnPhase = false;
-            wirePromptTMP.GetComponent<TextMeshProUGUI>().text = "Select 1st Connection Point";
-            wirePromptTMP.GetComponent<TextMeshProUGUI>().color = Color.white;
-            cancelSpawn.SetActive(false);
-            cancalSpawnZoomed.SetActive(false);
-
-            if (leadSpawnPhase)
-            {
-                leadSpawnPhase = false;
-                Simulation.UIEventPublisher.ConnectModeUI();
-                Simulation.UIEventPublisher.EditModeUI();
-            }
-        }
-    }
-
+    #region Private methods
     private void GetPrefabLength()
     {
         GameObject wirePrefabSegmentMeasurementInstance;
@@ -140,7 +112,7 @@ public class WireInstantiator : MonoBehaviour
 
         distanceBetweenPoints = Vector3.Magnitude(pointTwo.position - pointOne.position);
 
-        if(leadSpawnPhase)
+        if (leadSpawnPhase)
             wireLength = Mathf.PI * distanceBetweenPoints / 3f + elementPrefabLength; // use pi*d/2 + Element length
         else
             wireLength = Mathf.PI * distanceBetweenPoints / 2f; // use pi*d/2
@@ -184,7 +156,7 @@ public class WireInstantiator : MonoBehaviour
             {
                 currentSegment = Instantiate(elementPrefab, createPosition, createRotation);
             }
-            else if(leadSpawnPhase && i != numberOfSegments / 2)
+            else if (leadSpawnPhase && i != numberOfSegments / 2)
                 currentSegment = Instantiate(leadSegmentPrefab, createPosition, createRotation);
             else
                 currentSegment = Instantiate(wireSegmentPrefab, createPosition, createRotation);
@@ -207,7 +179,7 @@ public class WireInstantiator : MonoBehaviour
 
             if (i != 0)
             {
-                if (leadSpawnPhase && i == numberOfSegments/2)
+                if (leadSpawnPhase && i == numberOfSegments / 2)
                     currentSegment.GetComponentInChildren<ConfigurableJoint>().connectedBody = previousSegment.GetComponent<Rigidbody>();
                 else if (leadSpawnPhase && i == numberOfSegments / 2 + 1)
                 {
@@ -220,7 +192,7 @@ public class WireInstantiator : MonoBehaviour
                 }
                 else
                     currentSegment.GetComponent<ConfigurableJoint>().connectedBody = previousSegment.GetComponent<Rigidbody>();
-                
+
                 previousSegment = currentSegment;
             }
 
@@ -245,4 +217,121 @@ public class WireInstantiator : MonoBehaviour
     //    rescale.y = newSize * rescale.y / size;
     //    objectToResize.transform.localScale = rescale;
     //}
+    #endregion
+
+
+
+    #region Public methods
+    
+    /* This function executes when the player enters connect mode, and initiates the wire spawn phase unpon the player's
+     * selection of the first connection point.
+     */
+    public void WireSpawnPhaseInitiator()
+    {
+        //wireContainerTransform = wireContainer.transform;
+
+        // Start by casting a ray on the clicked object.
+        Ray raycast = Simulation.SingleRayCastByPlatform();
+
+        RaycastHit[] raycastHits = Physics.RaycastAll(raycast, 100f);
+
+        // Filter out objects hit by the raycast.
+        for (int i = 0; i < raycastHits.Length; i++)
+        {
+            // If an object with the Connection_Points tag is found, proceed.
+            if (raycastHits[i].transform.gameObject.CompareTag("Connection_Points"))
+            {
+                RaycastHit raycastHit = raycastHits[i];
+                // Check spawn point availablility status by checking its material color.
+                if (raycastHit.transform.gameObject.GetComponent<MeshRenderer>().material.color == redCPMat.color)
+                {
+                    // If not in Wire Spawn Phase, proceed.
+                    if (Simulation.inWireSpawnPhase == false)
+                    {
+                        raycastHit.transform.gameObject.GetComponent<MeshRenderer>().material = greenCPMat;
+                        connectionPointOne = raycastHit.transform;
+                        Simulation.inWireSpawnPhase = true;
+                        wirePromptTMP.GetComponent<TextMeshProUGUI>().text = "Select 2nd Connection Point";
+                        wirePromptTMP.GetComponent<TextMeshProUGUI>().color = Color.red;
+                        cancelSpawn.SetActive(true);
+                        cancelSpawnZoomed.SetActive(true);
+                    }
+                    // Otherwise, initiate second point selection phase.
+                    else if (Simulation.inWireSpawnPhase == true && raycastHit.transform != connectionPointOne)
+                    {
+                        connectionPointTwo = raycastHit.transform;
+                        SpawnWire(connectionPointOne, connectionPointTwo);
+                        Simulation.inWireSpawnPhase = false;
+                        connectionPointOne.gameObject.GetComponent<MeshRenderer>().material = blueCPMat;
+                        connectionPointTwo.gameObject.GetComponent<MeshRenderer>().material = blueCPMat;
+                        wirePromptTMP.GetComponent<TextMeshProUGUI>().text = "Select 1st Connection Point";
+                        wirePromptTMP.GetComponent<TextMeshProUGUI>().color = Color.white;
+                        cancelSpawn.SetActive(false);
+                        cancelSpawnZoomed.SetActive(false);
+
+                        // Checking if component wire or normal wire is beig spawned
+                        if (leadSpawnPhase)
+                        {
+                            leadSpawnPhase = false;
+                            Simulation.UIEventPublisher.ConnectModeUI();
+                            Simulation.UIEventPublisher.EditModeUI();
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    // Component Wire Spawn Phase Initiator Method
+    public void LeadSpawnPhaseInitiator(GameObject element, float resistanceValue)
+    {
+        leadSpawnPhase = true;
+        elementPrefab = element;
+        resistance = resistanceValue;
+    }
+
+    // Wire Color Setter Method
+    public void SetWireColor([SerializeField] Material wireMaterial)
+    {
+        wireSegmentPrefab.GetComponent<MeshRenderer>().material = wireMaterial;
+    }
+
+    // End Wire Spawn Phase Method
+    public void BreakWireSpawnPhase()
+    {
+        if (Simulation.inWireSpawnPhase == true)
+        {
+            connectionPointOne.gameObject.GetComponent<MeshRenderer>().material = redCPMat;
+            Simulation.inWireSpawnPhase = false;
+            wirePromptTMP.GetComponent<TextMeshProUGUI>().text = "Select 1st Connection Point";
+            wirePromptTMP.GetComponent<TextMeshProUGUI>().color = Color.white;
+            cancelSpawn.SetActive(false);
+            cancelSpawnZoomed.SetActive(false);
+
+            if (leadSpawnPhase)
+            {
+                leadSpawnPhase = false;
+                Simulation.UIEventPublisher.ConnectModeUI();
+                Simulation.UIEventPublisher.EditModeUI();
+            }
+        }
+    }
+    #endregion
+
+
+
+    #region UI Button Delegates
+
+    #endregion
+
+
+
+    #region Public properties
+
+    #endregion
+
+
+
+    
 }
