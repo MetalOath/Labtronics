@@ -33,8 +33,7 @@ MonoBehaviour:
     - Assembly-CSharp
     - GrabbitAssembly
     - vhacd
-    - AH_AssemblyDefinition
-    - Heureka_GlobalAssemblyDefinition
+    - PPv2URPConverters
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
