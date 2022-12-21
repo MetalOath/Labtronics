@@ -1,4 +1,4 @@
-# Mohawk-PBL-ELS
+# Labtronics
 
 ## Getting Started
 There are multiple ways to retrieve the project:
