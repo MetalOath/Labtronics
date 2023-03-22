@@ -26,6 +26,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.70710784}
   m_LocalPosition: {x: 0.3763894, y: -0.79919, z: 0.00035306156}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3117304101366659749}
   - {fileID: 9068671372546485038}
@@ -63,6 +64,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.0127, z: 0}
   m_LocalScale: {x: 0.010551051, y: 0.0286133, z: 0.017334523}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6497881660074907371}
   m_RootOrder: 2
@@ -86,6 +88,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -186,6 +189,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.70710784}
   m_LocalPosition: {x: -0.000010669197, y: -0.01293, z: 0.00035393314}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6748544588128982810}
   m_Father: {fileID: 6497881660074907371}
@@ -217,6 +221,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6497881659179778230}
   - {fileID: 267865300141348691}
@@ -253,6 +258,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.0040015, y: 0.8249802, z: 0.37658}
   m_LocalScale: {x: 0.005556, y: 0.005556, z: 0.005556}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 267865300141348691}
   m_RootOrder: 1
@@ -276,6 +282,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -348,6 +355,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.0045187, y: 0.8249586, z: 0.37663}
   m_LocalScale: {x: 0.0036467998, y: 0.0036467998, z: 0.0036467998}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 267865300141348691}
   m_RootOrder: 0
@@ -371,6 +379,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -508,27 +517,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 303c339062cb25843806b4ce4990c3be, type: 3}
---- !u!1 &8318092743082547597 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2973169283780962684, guid: 303c339062cb25843806b4ce4990c3be,
-    type: 3}
-  m_PrefabInstance: {fileID: 6497881660135928049}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4148002926323833699 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7187101096911661970, guid: 303c339062cb25843806b4ce4990c3be,
-    type: 3}
-  m_PrefabInstance: {fileID: 6497881660135928049}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5402964869062200417 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1213213350523272336, guid: 303c339062cb25843806b4ce4990c3be,
-    type: 3}
-  m_PrefabInstance: {fileID: 6497881660135928049}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6748544588128982810 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 303c339062cb25843806b4ce4990c3be,
     type: 3}
   m_PrefabInstance: {fileID: 6497881660135928049}
   m_PrefabAsset: {fileID: 0}
@@ -577,6 +568,12 @@ MonoBehaviour:
   calculatedCurrent: 0
   circuitResistanceTotal: 0
   powerSourceMaxCurrent: 1
+--- !u!1 &5402964869062200417 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1213213350523272336, guid: 303c339062cb25843806b4ce4990c3be,
+    type: 3}
+  m_PrefabInstance: {fileID: 6497881660135928049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!54 &6497881660135928061
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -622,6 +619,18 @@ MonoBehaviour:
   calculatedCurrent: 0
   circuitResistanceTotal: 0
   powerSourceMaxCurrent: 1
+--- !u!4 &6748544588128982810 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 303c339062cb25843806b4ce4990c3be,
+    type: 3}
+  m_PrefabInstance: {fileID: 6497881660135928049}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8318092743082547597 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2973169283780962684, guid: 303c339062cb25843806b4ce4990c3be,
+    type: 3}
+  m_PrefabInstance: {fileID: 6497881660135928049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!65 &124105839624328261
 BoxCollider:
   m_ObjectHideFlags: 0
