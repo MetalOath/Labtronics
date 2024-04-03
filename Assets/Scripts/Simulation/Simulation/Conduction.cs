@@ -2,23 +2,77 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Represents an electrical conductor in a circuit.
+ */
 public class Conduction : MonoBehaviour
 {
-    public bool positivePassThrough = false, negativePassThrough = false, simulationActiveState = false, loopIsClosed = false;
-    public float voltage, current, resistance, localResistance;
-    /*
-    * To know when a parallel circuit is created. 
-    * This will show where in the circuit it was split 
-    * to pass the current values from that point forward.
-    */
-    public int positiveNumberInSeries, negativeNumberInSeries;
+    /**
+     * Whether a positive charge can pass through this conductor.
+     */
+    public bool positivePassThrough = false;
 
+    /**
+     * Whether a negative charge can pass through this conductor.
+     */
+    public bool negativePassThrough = false;
+
+    /**
+     * Whether the simulation is actively running.
+     */
+    public bool simulationActiveState = false;
+
+    /**
+     * Whether the loop is closed.
+     */
+    public bool loopIsClosed = false;
+
+    /**
+     * The voltage of the conductor.
+     */
+    public float voltage;
+
+    /**
+     * The current of the conductor.
+     */
+    public float current;
+
+    /**
+     * The resistance of the conductor.
+     */
+    public float resistance;
+
+    /**
+     * The local resistance of the conductor.
+     */
+    public float localResistance;
+
+    /**
+     * The number of positive connections in series.
+     */
+    public int positiveNumberInSeries;
+
+    /**
+     * The number of negative connections in series.
+     */
+    public int negativeNumberInSeries;
+
+    /**
+     * A reference to the Simulation object.
+     */
     Simulation Simulation;
+
+    /**
+     * Initializes the Simulation variable.
+     */
     private void Start()
     {
         Simulation = GameObject.Find("Simulation Event Handler").GetComponent<Simulation>();
     }
 
+    /**
+     * Returns whether the loop is closed.
+     */
     public bool LoopIsClosed()
     {
         return loopIsClosed;
@@ -31,8 +85,7 @@ public class Conduction : MonoBehaviour
      */
     private void OnTriggerStay(Collider other)
     {
-        // TO DO: We used the battery cables for the multimeter and its now seeing the simulation 
-        // as an Open loop and will not pass the values for the multimeter to read. 
+        // Sets the simulationActiveState variable based on the state of the simulation.
         simulationActiveState = Simulation.simulationActiveState;
 
         if (simulationActiveState == true)
@@ -45,28 +98,29 @@ public class Conduction : MonoBehaviour
         }
     }
 
-    /*
-    * The circuit is connnected. Initialize the variables.
-    */
+    /**
+     * Initializes the variables when the loop is closed.
+     */
     private void ClosedLoopRoutine(Collider other)
     {
         if (positivePassThrough == true && negativePassThrough == true)
         {
             loopIsClosed = true;
         }
-        // instance of GameObject that is being collided with 
+
+        // The instance of the GameObject that is being collided with.
         GameObject otherObject = other.gameObject;
 
-        // Red wire must touch positive side of power source
+        // The red wire must touch the positive side of the power source.
         if (otherObject.tag == "Power_Source_Positive" && positiveNumberInSeries == 0)
         {
             positivePassThrough = true;
             positiveNumberInSeries += 1;
 
             voltage = otherObject.GetComponent<PowerSource>().getPowerSourceVoltage();
-
         }
-        // Black wire must touch negative side of power source
+
+        // The black wire must touch the negative side of the power source.
         if (otherObject.tag == "Power_Source_Negative" && negativeNumberInSeries == 0)
         {
             negativePassThrough = true;
@@ -78,8 +132,10 @@ public class Conduction : MonoBehaviour
             current = otherObject.GetComponent<PowerSource>().getCurrent();
             //Debug.Log("getting battery current");
         }
-        // instance of conduction property of "other" object
+
+        // The instance of the Conduction property of the "other" object.
         Conduction otherObjectConduction = otherObject.GetComponent<Conduction>();
+
         if (otherObjectConduction)
         {
             if(positiveNumberInSeries > otherObjectConduction.positiveNumberInSeries)
@@ -130,9 +186,9 @@ public class Conduction : MonoBehaviour
         }
     }
 
-    /*
-    * The circuit is disconnected. Reset all variables.
-    */
+    /**
+     * Resets all variables when the loop is open.
+     */
     private void OpenLoopRoutine()
     {
         negativeNumberInSeries = 0;
