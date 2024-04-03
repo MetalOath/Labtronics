@@ -1,126 +1,71 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq; // For LINQ operations that simplify handling collections
 
 /**
  * Represents an electrical conductor in a circuit.
  */
 public class Conduction : MonoBehaviour
 {
-    /**
-     * Whether a positive charge can pass through this conductor.
-     */
     public bool positivePassThrough = false;
-
-    /**
-     * Whether a negative charge can pass through this conductor.
-     */
     public bool negativePassThrough = false;
-
-    /**
-     * Whether the simulation is actively running.
-     */
     public bool simulationActiveState = false;
-
-    /**
-     * Whether the loop is closed.
-     */
     public bool loopIsClosed = false;
-
-    /**
-     * The voltage of the conductor.
-     */
     public float voltage;
-
-    /**
-     * The current of the conductor.
-     */
     public float current;
-
-    /**
-     * The resistance of the conductor.
-     */
     public float resistance;
-
-    /**
-     * The local resistance of the conductor.
-     */
     public float localResistance;
-
-    /**
-     * The number of positive connections in series.
-     */
     public int positiveNumberInSeries;
-
-    /**
-     * The number of negative connections in series.
-     */
     public int negativeNumberInSeries;
 
-    /**
-     * A reference to the Simulation object.
-     */
-    Simulation Simulation;
+    // Added: Collection to manage parallel connections
+    private List<Conduction> parallelConnections = new List<Conduction>();
 
-    /**
-     * Initializes the Simulation variable.
-     */
+    private Simulation Simulation;
+
     private void Start()
     {
         Simulation = GameObject.Find("Simulation Event Handler").GetComponent<Simulation>();
     }
 
-    /**
-     * Returns whether the loop is closed.
-     */
     public bool LoopIsClosed()
     {
         return loopIsClosed;
     }
 
-    /**
-     * Starts the electrical circuit when the simulation state is active.
-     * Electrical circuit will pass all the properties it needs to mimic current, 
-     * voltage, and resistance passing through an electrical component.
-     */
     private void OnTriggerStay(Collider other)
     {
-        // Sets the simulationActiveState variable based on the state of the simulation.
         simulationActiveState = Simulation.simulationActiveState;
 
-        if (simulationActiveState == true)
+        if (simulationActiveState)
         {
             ClosedLoopRoutine(other);
         }
-        else if (simulationActiveState == false)
+        else
         {
             OpenLoopRoutine();
         }
     }
 
-    /**
-     * Initializes the variables when the loop is closed.
-     */
     private void ClosedLoopRoutine(Collider other)
     {
-        if (positivePassThrough == true && negativePassThrough == true)
+        UpdateParallelConnections(other); // Handles updating the state based on parallel connections
+
+        if (positivePassThrough && negativePassThrough)
         {
             loopIsClosed = true;
         }
 
-        // The instance of the GameObject that is being collided with.
         GameObject otherObject = other.gameObject;
 
-        // The red wire must touch the positive side of the power source.
         if (otherObject.tag == "Power_Source_Positive" && positiveNumberInSeries == 0)
         {
             positivePassThrough = true;
             positiveNumberInSeries += 1;
-
             voltage = otherObject.GetComponent<PowerSource>().getPowerSourceVoltage();
         }
 
-        // The black wire must touch the negative side of the power source.
         if (otherObject.tag == "Power_Source_Negative" && negativeNumberInSeries == 0)
         {
             negativePassThrough = true;
@@ -130,65 +75,15 @@ public class Conduction : MonoBehaviour
         if (otherObject.tag == "Power_Source_Negative" && current == 0)
         {
             current = otherObject.GetComponent<PowerSource>().getCurrent();
-            //Debug.Log("getting battery current");
         }
 
-        // The instance of the Conduction property of the "other" object.
         Conduction otherObjectConduction = otherObject.GetComponent<Conduction>();
-
         if (otherObjectConduction)
         {
-            if(positiveNumberInSeries > otherObjectConduction.positiveNumberInSeries)
-            {
-                if(otherObjectConduction.voltage != 0 && voltage == 0)
-                {
-                    voltage = otherObjectConduction.voltage;
-                }
-                if (otherObjectConduction.resistance != 0 && resistance == 0)
-                {
-                    resistance = otherObjectConduction.resistance + localResistance;
-                    //Debug.Log("getting resistance from resistor");
-                }
-                if (otherObjectConduction.resistance == 0 && resistance == 0 && localResistance != 0)
-                {
-                    resistance = localResistance;
-                    //Debug.Log("Setting local resistance");
-                }
-            }
-
-            if(negativeNumberInSeries > otherObjectConduction.negativeNumberInSeries)
-            {
-                if (otherObjectConduction.current != 0 && current == 0)
-                {
-                    current = otherObjectConduction.current;
-                }
-            }
-
-            //Negative Check
-            if (otherObjectConduction.negativePassThrough == true && negativePassThrough == false)
-            {
-                negativePassThrough = true;
-                if (negativeNumberInSeries == 0 && otherObjectConduction.negativeNumberInSeries != 0)
-                {
-                    negativeNumberInSeries = otherObjectConduction.negativeNumberInSeries + 1;
-                }
-            }
-
-            //Positive Check
-            if (otherObjectConduction.positivePassThrough == true && positivePassThrough == false)
-            {
-                positivePassThrough = true;
-                if (positiveNumberInSeries == 0 && otherObjectConduction.positiveNumberInSeries != 0)
-                {
-                    positiveNumberInSeries = otherObjectConduction.positiveNumberInSeries + 1;
-                }
-            }
+            AggregateConductionProperties(otherObjectConduction);
         }
     }
 
-    /**
-     * Resets all variables when the loop is open.
-     */
     private void OpenLoopRoutine()
     {
         negativeNumberInSeries = 0;
@@ -199,5 +94,38 @@ public class Conduction : MonoBehaviour
         current = 0;
         resistance = 0;
         loopIsClosed = false;
+        parallelConnections.Clear();
+    }
+
+    // New Method: Handles updating the state based on parallel connections
+    private void UpdateParallelConnections(Collider other)
+    {
+        Conduction otherConduction = other.GetComponent<Conduction>();
+        if (otherConduction != null && !parallelConnections.Contains(otherConduction))
+        {
+            parallelConnections.Add(otherConduction);
+            RecalculateParallelProperties();
+        }
+    }
+
+    // New Method: Aggregates properties from parallel connections
+    private void RecalculateParallelProperties()
+    {
+        voltage = parallelConnections.Max(conduction => conduction.voltage); // Assumes voltage is the same across parallel paths
+        current = parallelConnections.Sum(conduction => conduction.current); // Total current is the sum of currents in parallel paths
+        resistance = 1 / parallelConnections.Sum(conduction => 1 / conduction.resistance); // Reciprocal of the sum of reciprocals of resistances
+    }
+
+    // Refactored for clarity and efficiency
+    private void AggregateConductionProperties(Conduction other)
+    {
+        positivePassThrough |= other.positivePassThrough;
+        negativePassThrough |= other.negativePassThrough;
+        positiveNumberInSeries = Mathf.Max(positiveNumberInSeries, other.positiveNumberInSeries + (positivePassThrough ? 1 : 0));
+        negativeNumberInSeries = Mathf.Max(negativeNumberInSeries, other.negativeNumberInSeries + (negativePassThrough ? 1 : 0));
+
+        if (voltage == 0) voltage = other.voltage;
+        if (current == 0) current = other.current;
+        if (resistance == 0) resistance = other.resistance + localResistance;
     }
 }
